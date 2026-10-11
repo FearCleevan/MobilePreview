@@ -6,6 +6,7 @@ import { Toolbar } from './Toolbar'
 import { Sidebar } from './Sidebar'
 import { MainCanvas } from './MainCanvas'
 import { SettingsDialog } from '@/components/settings/SettingsDialog'
+import { DeviceLibrary } from '@/components/devices/DeviceLibrary'
 import { Toaster, toast } from 'sonner'
 import { usePreviewStore } from '@/store/previewStore'
 import { useSettingsStore } from '@/store/settingsStore'
@@ -13,6 +14,7 @@ import { useSettingsStore } from '@/store/settingsStore'
 export const AppShell: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isDeviceLibraryOpen, setIsDeviceLibraryOpen] = useState(false)
   const { reloadAll } = usePreviewStore()
   const { theme } = useSettingsStore()
 
@@ -28,7 +30,7 @@ export const AppShell: React.FC = () => {
     }
   }, [theme])
 
-  // Global keyboard shortcuts (Phase 1 core shortcuts)
+  // Global keyboard shortcuts (Phase 1 & 2 core shortcuts)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Toggle sidebar: Ctrl+B or Cmd+B
@@ -45,11 +47,10 @@ export const AppShell: React.FC = () => {
         return
       }
 
-      // Add pane: Ctrl+N or Cmd+N
+      // Add pane (open library): Ctrl+N or Cmd+N
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n' && !e.shiftKey && !e.altKey) {
         e.preventDefault()
-        setIsSidebarOpen(true)
-        toast.info('Select a device from the library to add', { duration: 1800 })
+        setIsDeviceLibraryOpen(true)
         return
       }
 
@@ -73,7 +74,7 @@ export const AppShell: React.FC = () => {
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         isSidebarOpen={isSidebarOpen}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenAddDevice={() => setIsSidebarOpen(true)}
+        onOpenAddDevice={() => setIsDeviceLibraryOpen(true)}
       />
 
       {/* Main Workspace: Sidebar + Canvas */}
@@ -83,9 +84,15 @@ export const AppShell: React.FC = () => {
           onClose={() => setIsSidebarOpen(false)}
         />
         <MainCanvas
-          onOpenAddDevice={() => setIsSidebarOpen(true)}
+          onOpenAddDevice={() => setIsDeviceLibraryOpen(true)}
         />
       </div>
+
+      {/* Device Library Browser Modal (Phase 2) */}
+      <DeviceLibrary
+        open={isDeviceLibraryOpen}
+        onOpenChange={setIsDeviceLibraryOpen}
+      />
 
       {/* Settings Dialog Modal */}
       <SettingsDialog
@@ -103,4 +110,3 @@ export const AppShell: React.FC = () => {
     </div>
   )
 }
-
