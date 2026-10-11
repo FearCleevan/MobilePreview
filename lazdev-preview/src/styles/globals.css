@@ -1,0 +1,206 @@
+/* src/styles/globals.css */
+/* LazDev Device Preview — Global Styles */
+/* Design Direction: Dense dark canvas, devices are the visual subject, chrome stays recessive */
+/* Signature element: live viewport readout chips pinned to each frame corner */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── App shell tokens ─────────────────────────────── */
+    --bg-canvas: #0d0d0f;           /* Main preview canvas background */
+    --bg-surface: #141416;          /* Sidebar, toolbar backgrounds */
+    --bg-elevated: #1c1c20;         /* Cards, panels, drawers */
+    --bg-overlay: #242428;          /* Dropdowns, popovers */
+
+    --border-subtle: #2a2a2e;       /* Subtle separators */
+    --border-default: #3a3a3f;      /* Default borders */
+    --border-strong: #505058;       /* Focus rings, active borders */
+
+    --text-primary: #e8e8ec;        /* Primary text */
+    --text-secondary: #8a8a96;      /* Secondary/muted text */
+    --text-tertiary: #5a5a66;       /* Placeholder, disabled */
+    --text-inverted: #0d0d0f;       /* Text on accent backgrounds */
+
+    --accent: #4f9eff;              /* Primary interactive accent — calibrated blue, not AI-purple */
+    --accent-hover: #70b3ff;
+    --accent-muted: rgba(79, 158, 255, 0.12);
+
+    --success: #3ecf8e;
+    --warning: #f5a623;
+    --error: #e05858;
+
+    /* ── Bezel tokens (device frame chrome) ─────────────── */
+    --bezel-dark: #1a1a1a;
+    --bezel-light: #d4d4d8;
+    --bezel-highlight: rgba(255, 255, 255, 0.08);
+    --bezel-shadow: rgba(0, 0, 0, 0.6);
+
+    /* ── Safe area overlay ───────────────────────────── */
+    --safe-area-overlay: rgba(255, 0, 0, 0.15);
+
+    /* ── Viewport readout chip (signature element) ────── */
+    --chip-bg: rgba(13, 13, 15, 0.82);
+    --chip-border: rgba(79, 158, 255, 0.25);
+    --chip-text: #4f9eff;
+    --chip-font: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+
+    /* ── Radius scale ─────────────────────────────────── */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* ── Transitions ──────────────────────────────────── */
+    --transition-fast: 120ms ease;
+    --transition-default: 200ms ease;
+    --transition-slow: 350ms ease;
+
+    /* ── Min window ───────────────────────────────────── */
+    --min-window-width: 960px;
+    --min-window-height: 600px;
+  }
+
+  /* Light theme override — applied via .light class on <html> */
+  .light {
+    --bg-canvas: #f0f0f3;
+    --bg-surface: #ffffff;
+    --bg-elevated: #f8f8fb;
+    --bg-overlay: #ffffff;
+
+    --border-subtle: #e8e8ec;
+    --border-default: #d4d4da;
+    --border-strong: #a0a0aa;
+
+    --text-primary: #1a1a20;
+    --text-secondary: #5a5a70;
+    --text-tertiary: #9a9aa8;
+    --text-inverted: #ffffff;
+
+    --bezel-dark: #1a1a1a;
+    --bezel-light: #e8e8ed;
+    --bezel-highlight: rgba(255, 255, 255, 0.5);
+    --bezel-shadow: rgba(0, 0, 0, 0.2);
+  }
+
+  * {
+    box-sizing: border-box;
+    border-color: var(--border-default);
+  }
+
+  html {
+    min-width: var(--min-window-width);
+    min-height: var(--min-window-height);
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    /* Mono utility font for dimension readouts */
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-canvas);
+    overflow: hidden; /* App shell manages its own scroll areas */
+    user-select: none; /* Prevent accidental text selection in a tool UI */
+  }
+
+  /* Allow text selection inside specific content areas */
+  input, textarea, [data-selectable] {
+    user-select: text;
+  }
+
+  /* Focus visible styles — visible keyboard focus everywhere */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Remove default focus outline for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Scrollbar styling — matches the dark canvas */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+  }
+}
+
+@layer utilities {
+  /* Reduce motion: disables all pane animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Viewport readout chip — the signature element */
+  .viewport-chip {
+    position: absolute;
+    font-family: var(--chip-font);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--chip-text);
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    line-height: 1.5;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  /* Shimmer loading animation */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--bg-elevated) 0%,
+      var(--bg-overlay) 50%,
+      var(--bg-elevated) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer {
+      animation: none;
+      background: var(--bg-elevated);
+    }
+  }
+
+  /* Font mono utility */
+  .font-mono-ui {
+    font-family: var(--font-mono);
+  }
+}
+
